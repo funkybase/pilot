@@ -21,6 +21,8 @@ logging.basicConfig(level=logging.DEBUG)
 # ct2 = cwst cwrt flowrate
 # ct3 = cwst cwrt flowrate
 
+chiller = 0
+
 chiller1_map = {
         'ch2': [8, 11, 23],
         'ch8': [16, 0],
@@ -64,15 +66,32 @@ class TotalAggregation(Resource):
 
 class DailyAggregation(Resource):
     def get(self):
+        # import data.csv and related chiller labels as frames
+        # remove null for ALL major columns in same chiller
+        # remove same index for labels
+        # tally total amount of labels by modulo of signals each day ie 288
         return {'aggregate': 'data goes here'}
 
 class Signals(Resource):
-    def get(self):
-        # return signals
+    def get(self, chiller_id, rule_id):
+        if chiller_id = 1:
+            chiller = chiller1_map
+        else:
+            if chiller_id = 2:
+                chiller = chiller2_map
+            else:
+                chiller = chiller3_map
+
+        result_index = chiller[rule_id]
+        # import data.csv and related labels as frames
+        # do some preprocessing to remove null for major column. 
+        # remove same index for labels
+        # convert resulting frame to dictionary
+        # return dictionary
         return {'signal': 'raw signal goes here'}
 
 class Submit(Resource):
-    def get(self, rule_id):
+    def get(self):
 
         return {'submit': 'ticket is submitted'}
 # add polling for new alarms ie. query/collect
@@ -88,7 +107,7 @@ api.add_resource(HelloWorld, '/hi')
 api.add_resource(AlarmList, '/alarm')
 api.add_resource(TotalAggregation, '/total')
 api.add_resource(DailyAggregation, '/daily')
-api.add_resource(Signals, '/signal/<string:rule_id>')
+api.add_resource(Signals, '/signal/<int:chiller_id>/<string:rule_id>')
 api.add_resource(Query, '/query')
 api.add_resource(Collect, '/collect')
 
