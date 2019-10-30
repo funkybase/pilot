@@ -1,13 +1,14 @@
 from flask import Flask, jsonify
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
-import logging
+#import logging
 import pandas as pd
+import os
 
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 #class HelloWorld(Resource):
 #    def get(self):
@@ -20,39 +21,6 @@ logging.basicConfig(level=logging.DEBUG)
 # chwp6 = vsd dp
 # ct2 = cwst cwrt flowrate
 # ct3 = cwst cwrt flowrate
-
-chiller = 0
-
-chiller1_map = {
-        'ch2': [8, 11, 23],
-        'ch8': [16, 0],
-        'chwp1': [10,19],
-        'chwp2': [10, 19],
-        'chwp6': [4, 10],
-        'ct2': [12, 6, 23],
-        'ct3': [12, 6, 23]
-    }
-
-chiller2_map = {
-        'ch2': [30, 39, 24],
-        'ch8': [27, 40],
-        'chwp1': [46, 44],
-        'chwp2': [46, 44],
-        'chwp6': [25, 46],
-        'ct2': [36, 26, 24],
-        'ct3': [36, 26, 24]
-    }
-
-chiller3_map = {
-        'ch2': [80, 88, 81],
-        'ch8': [74, 78],
-        'chwp1': [89, 76],
-        'chwp2': [89, 76],
-        'chwp6': [86, 89],
-        'ct2': [82, 71, 81],
-        'ct3': [82, 71, 81]
-    }
-
 
 
 class AlarmList(Resource):
@@ -74,21 +42,18 @@ class DailyAggregation(Resource):
 
 class Signals(Resource):
     def get(self, chiller_id, rule_id):
-        if chiller_id = 1:
-            chiller = chiller1_map
-        else:
-            if chiller_id = 2:
-                chiller = chiller2_map
-            else:
-                chiller = chiller3_map
-
-        result_index = chiller[rule_id]
-        # import data.csv and related labels as frames
-        # do some preprocessing to remove null for major column. 
-        # remove same index for labels
+        shared_directory,current_file = os.path.split(os.path.realpath(__file__))
+        x = 5
+        app.logger.info("hello world")
+        app.logger.info(type(x))
+        app.logger.info(type(chiller_id))
+        filename = ""
+        filename = filename + shared_directory + '/chiller' + chiller_id + '_' + rule_id + '_signals.csv'
+        # join string with join()
+        signal = pd.read_csv(filename) 
         # convert resulting frame to dictionary
         # return dictionary
-        return {'signal': 'raw signal goes here'}
+        return signal.to_dict('records')
 
 class Submit(Resource):
     def get(self):
@@ -103,11 +68,11 @@ class Collect(Resource):
     def get(self):
         return {'collection': 'alarm metainfo goes here'}
 
-api.add_resource(HelloWorld, '/hi')
+# api.add_resource(HelloWorld, '/hi')
 api.add_resource(AlarmList, '/alarm')
 api.add_resource(TotalAggregation, '/total')
 api.add_resource(DailyAggregation, '/daily')
-api.add_resource(Signals, '/signal/<int:chiller_id>/<string:rule_id>')
+api.add_resource(Signals, '/signal/<string:chiller_id>/<string:rule_id>')
 api.add_resource(Query, '/query')
 api.add_resource(Collect, '/collect')
 
